@@ -109,6 +109,14 @@ void save(const std::string filename,
 }
 */
 
+//Used to create an alternative representation of the training data, disclaimer, not sure if I mixed up rows and collumns here
+arma::mat converter(arma::mat mat){
+	arma::mat converted = arma::ones(mat.n_rows-4);
+	for(int i = 0 ,i<mat.n_cols-4){
+	converted.at(i,0) = mat.submat(i,0,i+4,0)};
+	
+	return converted;}
+
 void buildLSTMModel(RNN<>& model,
                          const int sizeInputLayer,
                          const int totalClasses)
@@ -242,14 +250,21 @@ int main () {
     data::Load("../utils/training.csv", tempDataset, true); // read data from this csv file, creates arma matrix with loaded data in tempDataset
     //cout << "training data" << tempDataset << tempDataset.size() << endl;    
     // Initialize loaded data where row = dimension = 1, column = note values, slice = timestep
-	
-    // Splitting the dataset on training and validation parts.
-	
+   
+
+    // Normalize data before training 
     const int num_notes = tempDataset.max()
     tempDatatset= tempDataset / num_notes
-    // Normalize data before training 
-
+    
+    // Reformatic training data into list of lists for alternative representation try. 
+    tempDataset = converter(tempDataset) 
+    // Splitting the dataset on training and validation parts.
 	
+
+	    
+    // Disclaimer: Need to change parameters of trainX,trainY, validX, validY here
+    //size the number of features in each timestep changes (not sure if good use of vocabulary) - trying to figure out how help if can
+    
     const int ind = (int) 9*tempDataset.n_rows / 10;
     cube trainX = cube(1, ind,rho);
     cube trainY = cube(1,ind,rho);
