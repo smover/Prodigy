@@ -244,6 +244,12 @@ int main () {
     // Initialize loaded data where row = dimension = 1, column = note values, slice = timestep
 	
     // Splitting the dataset on training and validation parts.
+	
+    const int num_notes = tempDataset.max()
+    tempDatatset= tempDataset / num_notes
+    // Normalize data before training 
+
+	
     const int ind = (int) 9*tempDataset.n_rows / 10;
     cube trainX = cube(1, ind,rho);
     cube trainY = cube(1,ind,rho);
@@ -295,5 +301,6 @@ int main () {
     predictClass(model, datasetName,rho);
     cout << "Finished" << endl;
     
+    //Remember to rescale notes back by taking ceiling function of predictions * num_notes 
     return 0;
 }
